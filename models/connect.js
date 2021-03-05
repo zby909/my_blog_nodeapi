@@ -20,9 +20,6 @@ const option = {
 	multipleStatements: false //是否允许一个query中包含多条sql语句
 }
 
-let pool;
-repool()
-
 function Result({ code = 1, msg = '', data = {} }) {
 	this.code = code;
 	this.msg = msg;
@@ -30,6 +27,7 @@ function Result({ code = 1, msg = '', data = {} }) {
 }
 
 // 断线重连机制
+let pool;
 function repool() {
 	// 创建连接池
 	pool = mysql.createPool({
@@ -47,5 +45,6 @@ function repool() {
 		})
 	})
 }
+repool()
 
-module.exports = { app, pool, Result, router }
+module.exports = { app, router, Result, pool }

@@ -1,6 +1,5 @@
-const { pool, router, Result } = require('../models/connect')
+const { pool, Result, router } = require('../models/connect')
 const nodemailer = require('nodemailer')
-
 
 const transport = nodemailer.createTransport({
 	host: 'smtp.qq.com', // 服务
