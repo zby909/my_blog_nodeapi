@@ -9,7 +9,7 @@ app.all('*', (req, res, next) => {
 app.use('/sendemail', sendEmail)
 
 app.listen(8088, () => {
-	console.log('服务启动')
+	console.log('服务启动咯')
 })
 // res.json 以json对象的形式返回去
 // res.send 以也页面的形式返回去
