@@ -1,5 +1,6 @@
-const { pool, Result, router } = require('../models/connect')
+const { Result, pool } = require('../models/connect')
 const nodemailer = require('nodemailer')
+
 
 const transport = nodemailer.createTransport({
 	host: 'smtp.qq.com', // 服务
@@ -21,7 +22,7 @@ const randomFns = () => { // 生成6位随机数
 
 const regEmail = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/ //验证邮箱正则
 
-router.get('/', (req, res) => {
+const sendEmail = (req, res) => {
 	let EMAIL = '362870287@qq.com'
 	// let EMAIL = req.body.e_mail
 	if (regEmail.test(EMAIL)) {
@@ -40,15 +41,15 @@ router.get('/', (req, res) => {
 				if (error) {
 					transport.close(); // 如果没用，关闭连接池
 				} else {
-					res.json(new Result({ status: 200, msg: '发送成功' }))
+					res.json(new Result({ msg: '发送成功' }))
 				}
 				// assert(!error, 500, "发送验证码错误！")
 			})
 	} else {
-		res.json(new Result({ status: 200, msg: '请输入正确的邮箱格式！' }))
+		res.json(new Result({ msg: '请输入正确的邮箱格式！' }))
 		// assert(false, 422, '请输入正确的邮箱格式！')
 	}
-})
+}
 
 
 
@@ -60,4 +61,4 @@ router.get('/', (req, res) => {
 // 	pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
 // })
 
-module.exports = router;
+module.exports = sendEmail;

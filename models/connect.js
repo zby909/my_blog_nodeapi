@@ -20,7 +20,7 @@ const option = {
 	multipleStatements: false //是否允许一个query中包含多条sql语句
 }
 
-function Result({ code = 1, msg = '', data = {} }) {
+function Result({ code = 0, msg = '', data = null }) {
 	this.code = code;
 	this.msg = msg;
 	this.data = data;
