@@ -3,8 +3,8 @@ const router = require('./router/router')
 
 app.all('*', (req, res, next) => {
 	//这里处理全局拦截，一定要写在最上面
-	res.json(new Result({ msg: '服务器维护中' }))
-	// next()
+	// res.json(new Result({ msg: '服务器维护中' }))
+	next()
 })
 app.use(router)
 
