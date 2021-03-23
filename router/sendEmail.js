@@ -1,4 +1,4 @@
-const { Result, pool } = require('../models/connect')
+const { Result, query } = require('../models/connect')
 const nodemailer = require('nodemailer')
 
 
@@ -22,7 +22,7 @@ const randomFns = () => { // 生成6位随机数
 
 const regEmail = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/ //验证邮箱正则
 
-const sendEmail = (req, res) => {
+const sendEmail = (req, res, next) => {
 	let EMAIL = '362870287@qq.com'
 	// let EMAIL = req.body.e_mail
 	if (regEmail.test(EMAIL)) {
@@ -37,8 +37,9 @@ const sendEmail = (req, res) => {
 					<p>你的验证码是：<strong style="color: #ff4e2a;">${code}</strong></p>
 					<p>***该验证码5分钟内有效***</p>` // html 内容
 		},
-			function (error, data) {
+			(error, data) => {
 				if (error) {
+					next(error);
 					transport.close(); // 如果没用，关闭连接池
 				} else {
 					res.json(new Result({ msg: '发送成功' }))
@@ -58,7 +59,7 @@ const sendEmail = (req, res) => {
 // 		if (e) throw error
 // 		res.json(new Result({ data: r }))
 // 	})
-// 	pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
+// 	pool.releaseConnection(conn) // 
 // })
 
 module.exports = sendEmail;

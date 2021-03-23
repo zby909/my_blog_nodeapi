@@ -6,7 +6,7 @@ const register = require('./register')
 
 router.get('/sendEmail', sendEmail);
 router.get('/zby', zby);
-router.get('/register', register);
+router.post('/register', register);
 
 
 module.exports = router

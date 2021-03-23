@@ -1,34 +1,35 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const router = express.Router();
-const mysql = require('mysql')
+const mysql = require('mysql');
 
 // 解析参数
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+console.log(bodyParser);
 // json请求
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 // 表单请求
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
 const option = {
 	host: '47.103.43.251',
 	user: 'zby',
 	password: '909908',
 	port: '3306',
-	database: 'gname',
+	database: 'vue_blog',
 	connectTimeout: 5000, //连接超时
 	multipleStatements: false //是否允许一个query中包含多条sql语句
-}
+};
 
-function Result({ status = 0, msg = '', data = null }) {
-	this.status = status;
+function Result({ code = 0, msg = '', data = null }) {
+	this.code = code;
 	this.msg = msg;
-	this.data = data;
-}
+	data ? this.data = data : '';
+};
 
 // 断线重连机制
 let pool;
-function repool() {
+(function repool() {
 	// 创建连接池
 	pool = mysql.createPool({
 		...option,
@@ -44,7 +45,53 @@ function repool() {
 			err && setTimeout(repool, 2000) || next()
 		})
 	})
-}
-repool()
+}());
+// repool()
 
-module.exports = { app, router, Result, pool }
+// const query = (sql, sqlParams) => {
+// 	// 返回一个 Promise
+// 	pool.getConnection((err, conn) => {
+// 		if (err) {
+// 			return [null, err];
+// 		} else {
+// 			conn.query(sql, sqlParams, (err, qres, fields) => {
+// 				if (err) {
+// 					return [null, err];
+// 				} else {
+// 					return [qres, null];
+// 				}
+// 			});
+// 		}
+// 		// conn.release(); // not work!!!
+// 		pool.releaseConnection(conn);
+// 	});
+
+// }
+
+//发起mysql请求 是否监听该链接错误 查询语句 查询参数
+const query = (next, sql, sqlParams) => {
+	return new Promise((resolve, reject) => {
+		pool.getConnection((err, conn) => {
+			if (err) {
+				reject(err)
+			} else {
+				conn.query(sql, sqlParams, (err, res, fields) => {
+					if (err) {
+						reject(err)
+					} else {
+						resolve([res, null])
+					}
+				});
+			}
+			// conn.release(); // not work!!!
+			pool.releaseConnection(conn);
+		});
+	}).catch((err) => {
+		if (next) {
+			next(err);
+		}
+		return [null, err]
+	})
+}
+
+module.exports = { app, router, Result, query }
